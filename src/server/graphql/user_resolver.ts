@@ -10,21 +10,27 @@ export const userResolver: GraphQLModelResolver<User> = {
   orders: (parent) => {
     return dataSource.manager.find(Order, {
       where: {
-        user: parent,
+        user: {
+          id: parent.id,
+        },
       },
     });
   },
   profile: (parent) => {
     return dataSource.manager.findOneOrFail(Profile, {
       where: {
-        user: parent,
+        user: {
+          id: parent.id,
+        },
       },
     });
   },
   reviews: (parent) => {
     return dataSource.manager.find(Review, {
       where: {
-        user: parent,
+        user: {
+          id: parent.id,
+        },
       },
     });
   },

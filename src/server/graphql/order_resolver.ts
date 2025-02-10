@@ -8,7 +8,9 @@ export const orderResolver: GraphQLModelResolver<Order> = {
   items: async (parent) => {
     return dataSource.manager.find(ShoppingCartItem, {
       where: {
-        order: parent,
+        order: {
+          id: parent.id,
+        },
       },
     });
   },

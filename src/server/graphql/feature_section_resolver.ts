@@ -11,7 +11,9 @@ export const featureSectionResolver: GraphQLModelResolver<FeatureSection> = {
         product: true,
       },
       where: {
-        section: parent,
+        section: {
+          id: parent.id,
+        },
       },
     });
   },
