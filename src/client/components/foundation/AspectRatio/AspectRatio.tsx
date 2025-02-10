@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { throttle } from 'throttle-debounce';
 
 import * as styles from './AspectRatio.styles';
 
@@ -15,21 +14,17 @@ export const AspectRatio: FC<Props> = ({ children, ratioHeight, ratioWidth }) =>
   const [clientHeight, setClientHeight] = useState<number>(0);
 
   useEffect(() => {
-    const updateClientHeight = throttle(1000, () => {
-      const width = containerRef.current?.getBoundingClientRect().width ?? 0;
-      const height = (width * ratioHeight) / ratioWidth;
-      setClientHeight(height);
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width } = entry.contentRect;
+      setClientHeight((width * ratioHeight) / ratioWidth);
     });
 
-    let timer = (function tick() {
-      return setImmediate(() => {
-        updateClientHeight();
-        timer = tick();
-      });
-    })();
+    observer.observe(containerRef.current);
 
     return () => {
-      clearImmediate(timer);
+      observer.disconnect();
     };
   }, [ratioHeight, ratioWidth]);
 

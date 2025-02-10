@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { throttle } from 'throttle-debounce';
 
 const ITEM_MIN_WIDTH = 250 as const;
 
@@ -10,22 +9,14 @@ export const useSlider = ({ items }: { items: unknown[] }) => {
   const slideIndex = Math.min(Math.max(0, _slideIndex), items.length - 1);
 
   useEffect(() => {
-    const updateVisibleItemCount = throttle(500, () => {
-      setVisibleItemCount(() => {
-        const containerWidth = containerElementRef.current?.getBoundingClientRect().width ?? 0;
-        return Math.max(Math.floor(containerWidth / ITEM_MIN_WIDTH), 1);
-      });
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      setVisibleItemCount(Math.max(Math.floor(width / ITEM_MIN_WIDTH), 1));
     });
-
-    let timer = (function tick() {
-      return setImmediate(() => {
-        updateVisibleItemCount();
-        timer = tick();
-      });
-    })();
-
+    const el = containerElementRef.current;
+    if (el) observer.observe(el);
     return () => {
-      clearImmediate(timer);
+      if (el) observer.unobserve(el);
     };
   }, []);
 

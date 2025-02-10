@@ -1,29 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { OrderFragmentResponse } from '../graphql/fragments';
 import { getActiveOffer } from '../utils/get_active_offer';
 
 export function useTotalPrice(order: OrderFragmentResponse) {
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const updateTotalPrice = useCallback(() => {
+    let total = 0;
+    for (const item of order.items) {
+      const offer = getActiveOffer(item.product.offers);
+      const price = offer?.price ?? item.product.price;
+      total += price * item.amount;
+    }
+    setTotalPrice(total);
+  }, [order]);
 
   useEffect(() => {
-    let timer = (function tick() {
-      return setImmediate(() => {
-        let total = 0;
-        for (const item of order.items) {
-          const offer = getActiveOffer(item.product.offers);
-          const price = offer?.price ?? item.product.price;
-          total += price * item.amount;
-        }
-        setTotalPrice(total);
-        timer = tick();
-      });
-    })();
+    const timer = setInterval(updateTotalPrice, 1000);
 
     return () => {
-      clearImmediate(timer);
+      clearInterval(timer);
     };
-  }, [order]);
+  }, [updateTotalPrice]);
 
   return { totalPrice };
 }
