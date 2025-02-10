@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import type { ChangeEventHandler, FC } from 'react';
 
 import { PrimaryButton } from '../../foundation/PrimaryButton';
@@ -49,7 +49,7 @@ export const OrderForm: FC<Props> = ({ onSubmit }) => {
     }
 
     const zipCode = event.target.value;
-    const address = [...(_.cloneDeep(zipcodeJa)[zipCode]?.address ?? [])];
+    const address = [...(cloneDeep(zipcodeJa)[zipCode]?.address ?? [])];
     const prefecture = address.shift();
     const city = address.join(' ');
 
