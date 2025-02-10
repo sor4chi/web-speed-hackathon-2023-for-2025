@@ -57,7 +57,7 @@ async function init(): Promise<void> {
   );
 
   app.use(
-    route.post('/initialize', async (ctx) => {
+    route.post('/api/initialize', async (ctx) => {
       await initializeDatabase();
       ctx.status = 204;
     }),
