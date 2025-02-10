@@ -6,6 +6,7 @@ import { koaMiddleware } from '@as-integrations/koa';
 import gracefulShutdown from 'http-graceful-shutdown';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
+import compress from 'koa-compress';
 import logger from 'koa-logger';
 import route from 'koa-route';
 import session from 'koa-session';
@@ -28,6 +29,7 @@ async function init(): Promise<void> {
   await dataSource.initialize();
 
   const app = new Koa();
+  app.use(compress());
   const httpServer = http.createServer(app.callback());
 
   app.keys = ['cookie-key'];
