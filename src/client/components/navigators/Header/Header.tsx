@@ -15,7 +15,7 @@ export const Header: FC = () => {
     <header className={styles.container()}>
       <Anchor href="/">
         <div className={styles.logo()}>
-          <img height="32" src="/icons/logo.svg" width="205" />
+          <img height="32" loading="eager" src="/icons/logo.svg" width="205" />
         </div>
       </Anchor>
       {isAuthUser ? (

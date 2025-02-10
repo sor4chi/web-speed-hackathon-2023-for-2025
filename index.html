@@ -6,9 +6,7 @@
     <meta name="robots" content="noindex" />
     <title><%= title %></title>
 
-    <% for (var href of videos) { %>
-    <link rel="preload" as="video" fetchPriority="high" href="<%= href %>" />
-    <% } %>
+    <link as="image" href="/icons/logo.svg" rel="preload" />
 
     <script type="module" src="<%= module %>"></script>
   </head>
