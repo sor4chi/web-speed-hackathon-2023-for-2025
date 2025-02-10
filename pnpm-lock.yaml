@@ -80,6 +80,9 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
+      lodash-es:
+        specifier: 4.17.21
+        version: 4.17.21
       modern-css-reset:
         specifier: 1.4.0
         version: 1.4.0

@@ -22,18 +22,6 @@ export default defineConfig(async () => {
   const videos = await getPublicFileList(path.resolve(publicDir, 'videos'));
 
   return {
-    build: {
-      assetsInlineLimit: 20480,
-      cssCodeSplit: false,
-      cssTarget: 'es6',
-      minify: false,
-      rollupOptions: {
-        output: {
-          experimentalMinChunkSize: 40960,
-        },
-      },
-      target: 'es2015',
-    },
     plugins: [
       react(),
       wasm(),
