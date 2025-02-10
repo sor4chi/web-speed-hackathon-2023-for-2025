@@ -13,7 +13,8 @@ export const container = () => css`
 `;
 
 export const image = () => css`
-  height: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
   object-fit: cover;
   width: 100%;
 `;
