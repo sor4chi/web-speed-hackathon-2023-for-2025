@@ -18,3 +18,11 @@ export const featureHeading = () => css`
   font-weight: 700;
   padding: 0 16px;
 `;
+
+export const heroImageContainer = () => css`
+  aspect-ratio: 16 / 9;
+  height: auto;
+  margin: 0 auto;
+  max-width: 1024px;
+  width: 100%;
+`;

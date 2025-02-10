@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { Layout } from '../../components/application/Layout';
@@ -10,13 +10,6 @@ import { useRecommendation } from '../../hooks/useRecommendation';
 import * as styles from './Top.styles';
 
 export const Top: FC = () => {
-  const { recommendation } = useRecommendation();
-  const { features } = useFeatures();
-
-  if (recommendation === undefined || features === undefined) {
-    return null;
-  }
-
   return (
     <>
       <Helmet>
@@ -24,20 +17,46 @@ export const Top: FC = () => {
       </Helmet>
       <Layout>
         <div>
-          <ProductHeroImage product={recommendation.product} title="今週のオススメ" />
+          <Suspense fallback={<div className={styles.heroImageContainer()} />}>
+            <Recommendation />
+          </Suspense>
 
-          <div className={styles.featureList()}>
-            {features.map((featureSection) => {
-              return (
-                <div key={featureSection.id} className={styles.feature()}>
-                  <h2 className={styles.featureHeading()}>{featureSection.title}</h2>
-                  <ProductList featureSection={featureSection} />
-                </div>
-              );
-            })}
-          </div>
+          <Suspense fallback={<div style={{ height: '100vh' }} />}>
+            <FeatureList />
+          </Suspense>
         </div>
       </Layout>
     </>
+  );
+};
+
+const Recommendation: FC = () => {
+  const { recommendation } = useRecommendation();
+
+  if (recommendation === undefined) {
+    return null;
+  }
+
+  return <ProductHeroImage product={recommendation.product} title="今週のオススメ" />;
+};
+
+const FeatureList: FC = () => {
+  const { features } = useFeatures();
+
+  if (features === undefined) {
+    return null;
+  }
+
+  return (
+    <div className={styles.featureList()}>
+      {features.map((featureSection) => {
+        return (
+          <div key={featureSection.id} className={styles.feature()}>
+            <h2 className={styles.featureHeading()}>{featureSection.title}</h2>
+            <ProductList featureSection={featureSection} />
+          </div>
+        );
+      })}
+    </div>
   );
 };
