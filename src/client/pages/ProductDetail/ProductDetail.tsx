@@ -59,10 +59,10 @@ export const ProductDetail: FC = () => {
           <div className={styles.container()}>
             <section className={styles.details()}>
               <ProductMediaListPreviewer product={product} />
-              <div className={styles.overview()}>
+              <div className={styles.overview()} style={{ minHeight: '300px' }}>
                 <ProductOverview activeOffer={activeOffer} product={product} />
               </div>
-              <div className={styles.purchase()}>
+              <div className={styles.purchase()} style={{ height: '65px' }}>
                 <ProductPurchaseSection
                   amountInCart={amountInCart}
                   isAuthUser={isAuthUser}
