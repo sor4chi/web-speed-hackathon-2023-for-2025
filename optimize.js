@@ -54,4 +54,17 @@ await Promise.all(
       .webp({ quality: 75 })
       .toFile(path.replace('.png', '-40x40.webp'));
   }),
+  // product avatar images
+  (
+    await glob('./public/images/avatars/*.jpg')
+  ).map(async (path) => {
+    await sharp(path)
+      .resize({
+        fit: 'cover',
+        height: 52,
+        width: 52,
+      })
+      .webp({ quality: 75 })
+      .toFile(path.replace('.jpg', '-52x52.webp'));
+  }),
 );
