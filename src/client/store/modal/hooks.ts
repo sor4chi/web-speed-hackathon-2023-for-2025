@@ -1,16 +1,16 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import type { ModalKey } from './state';
 import { modalState } from './state';
 
 export const useIsOpenModal = (key: ModalKey) => {
-  const modalKey = useRecoilValue(modalState);
+  const modalKey = useAtomValue(modalState);
 
   return modalKey === key;
 };
 
 export const useOpenModal = () => {
-  const setModal = useSetRecoilState(modalState);
+  const setModal = useSetAtom(modalState);
 
   return (key: ModalKey) => {
     setModal(key);
@@ -18,7 +18,7 @@ export const useOpenModal = () => {
 };
 
 export const useCloseModal = () => {
-  const setModal = useSetRecoilState(modalState);
+  const setModal = useSetAtom(modalState);
 
   return () => {
     setModal(undefined);
