@@ -22,4 +22,20 @@ export const injectGlobalStyle = () => css`
     margin: 0;
     padding: 0;
   }
+
+  @font-face {
+    font-display: block;
+    font-family: 'Noto Serif JP';
+    font-style: normal;
+    font-weight: 700;
+    src: url('/fonts/NotoSerifJP-Bold.subset.otf');
+  }
+
+  @font-face {
+    font-display: block;
+    font-family: 'Noto Serif JP';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/NotoSerifJP-Regular.subset.otf');
+  }
 `;

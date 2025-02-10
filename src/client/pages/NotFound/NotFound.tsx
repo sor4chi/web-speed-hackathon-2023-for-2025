@@ -1,28 +1,11 @@
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { Layout } from '../../components/application/Layout';
-import { loadFonts } from '../../utils/load_fonts';
 
 import * as styles from './NotFound.styles';
 
 export const NotFound: FC = () => {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const load = async () => {
-      await loadFonts();
-      setIsReady(true);
-    };
-
-    load();
-  }, []);
-
-  if (!isReady) {
-    return null;
-  }
-
   return (
     <>
       <Helmet>
