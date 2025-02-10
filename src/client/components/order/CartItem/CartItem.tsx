@@ -6,9 +6,7 @@ import type { ShoppingCartItemFragmentResponse } from '../../../graphql/fragment
 import { useActiveOffer } from '../../../hooks/useActiveOffer';
 import { normalizeCartItemCount } from '../../../utils/normalize_cart_item';
 import { Anchor } from '../../foundation/Anchor';
-import { AspectRatio } from '../../foundation/AspectRatio';
 import { DeviceType, GetDeviceType } from '../../foundation/GetDeviceType';
-import { Image } from '../../foundation/Image';
 import { OutlineButton } from '../../foundation/OutlineButton';
 import { ProductOfferLabel } from '../../product/ProductOfferLabel';
 
@@ -50,9 +48,12 @@ export const CartItem: FC<Props> = ({ item, onRemove, onUpdate }) => {
                         [styles.thumbnail__mobile()]: deviceType === DeviceType.MOBILE,
                       })}
                     >
-                      <AspectRatio ratioHeight={9} ratioWidth={16}>
-                        <Image fill src={thumbnailFile.filename} />
-                      </AspectRatio>
+                      <img
+                        className={styles.image()}
+                        height={144}
+                        src={thumbnailFile.filename.replace('.jpg', '-256x144.webp')}
+                        width={256}
+                      />
                       {activeOffer !== undefined && (
                         <div className={styles.offerLabel()}>
                           <ProductOfferLabel size="base">タイムセール中</ProductOfferLabel>

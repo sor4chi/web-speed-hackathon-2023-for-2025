@@ -67,4 +67,17 @@ await Promise.all(
       .webp({ quality: 75 })
       .toFile(path.replace('.jpg', '-52x52.webp'));
   }),
+  // cart images
+  (
+    await glob('./public/images/products/**/*.jpg')
+  ).map(async (path) => {
+    await sharp(path)
+      .resize({
+        fit: 'cover',
+        height: 144,
+        width: 256,
+      })
+      .webp({ quality: 75 })
+      .toFile(path.replace('.jpg', '-256x144.webp'));
+  }),
 );

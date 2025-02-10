@@ -39,6 +39,13 @@ export const thumbnail = () => css`
   position: relative;
 `;
 
+export const image = () => css`
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  width: 100%;
+`;
+
 export const thumbnail__mobile = () => css`
   width: 50%;
 `;
