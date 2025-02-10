@@ -4,6 +4,7 @@ export const container = () => css`
   align-items: center;
   display: flex;
   gap: 8px;
+  height: 100%;
   padding: 0 16px;
 `;
 

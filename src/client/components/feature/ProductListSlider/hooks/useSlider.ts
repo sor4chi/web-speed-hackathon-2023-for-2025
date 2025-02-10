@@ -4,7 +4,7 @@ const ITEM_MIN_WIDTH = 250 as const;
 
 export const useSlider = ({ items }: { items: unknown[] }) => {
   const containerElementRef = useRef<HTMLUListElement>(null);
-  const [visibleItemCount, setVisibleItemCount] = useState(1);
+  const [visibleItemCount, setVisibleItemCount] = useState(0);
   const [_slideIndex, setSlideIndex] = useState(0);
   const slideIndex = Math.min(Math.max(0, _slideIndex), items.length - 1);
 

@@ -4,8 +4,6 @@ import type { FC } from 'react';
 import type { ProductFragmentResponse } from '../../../graphql/fragments';
 import { useActiveOffer } from '../../../hooks/useActiveOffer';
 import { Anchor } from '../../foundation/Anchor';
-import { AspectRatio } from '../../foundation/AspectRatio';
-import { Image } from '../../foundation/Image';
 import { ProductOfferLabel } from '../../product/ProductOfferLabel';
 
 import * as styles from './ProductCard.styles';
@@ -23,13 +21,10 @@ export const ProductCard: FC<Props> = ({ product }) => {
   return (
     <Anchor href={`/product/${product.id}`}>
       <div className={styles.inner()}>
-        {thumbnailFile ? (
-          <div className={styles.image()}>
-            <AspectRatio ratioHeight={9} ratioWidth={16}>
-              <Image height={126} src={thumbnailFile.filename.replace('.jpg', '-224x126.webp')} width={224} />
-            </AspectRatio>
-          </div>
-        ) : null}
+        <div className={styles.image()}>
+          <img height={126} loading="lazy" src={thumbnailFile?.filename.replace('.jpg', '-224x126.webp')} width={224} />
+        </div>
+
         <div className={styles.description()}>
           <p className={styles.itemName()}>{product.name}</p>
           <span className={styles.itemPrice()}>{currencyFormatter.format(price, { code: 'JPY', precision: 0 })}</span>

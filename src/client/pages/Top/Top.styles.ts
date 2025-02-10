@@ -19,8 +19,9 @@ export const featureHeading = () => css`
   padding: 0 16px;
 `;
 
-export const heroImageContainer = () => css`
+export const heroImagePlaceholder = () => css`
   aspect-ratio: 16 / 9;
+  background-color: gray;
   height: auto;
   margin: 0 auto;
   max-width: 1024px;

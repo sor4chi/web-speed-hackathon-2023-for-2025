@@ -17,7 +17,9 @@ export const label = () => css`
 export const image = () => css`
   border-radius: 8px;
   display: grid;
+  height: 126px;
   overflow: hidden;
+  width: 224px;
 `;
 
 export const description = () => css`

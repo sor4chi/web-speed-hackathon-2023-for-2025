@@ -17,7 +17,7 @@ export const Top: FC = () => {
       </Helmet>
       <Layout>
         <div>
-          <Suspense fallback={<div className={styles.heroImageContainer()} />}>
+          <Suspense fallback={<div className={styles.heroImagePlaceholder()} />}>
             <Recommendation />
           </Suspense>
 
