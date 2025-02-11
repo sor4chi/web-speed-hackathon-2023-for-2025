@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash-es';
 import type { FC } from 'react';
 import { memo } from 'react';
 
@@ -30,6 +29,6 @@ export const ProductList: FC<Props> = memo(({ featureSection }) => {
       </GetDeviceType>
     </div>
   );
-}, isEqual);
+});
 
 ProductList.displayName = 'ProductList';
