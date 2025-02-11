@@ -47,12 +47,7 @@ export const SignInModal: FC = () => {
     },
     async onSubmit(values, { resetForm }) {
       try {
-        await signIn({
-          variables: {
-            email: values.email,
-            password: values.password,
-          },
-        });
+        await signIn(values.email, values.password);
         resetForm();
         setSubmitError(null);
         handleCloseModal();

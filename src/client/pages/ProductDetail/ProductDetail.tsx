@@ -12,7 +12,6 @@ import { useActiveOffer } from '../../hooks/useActiveOffer';
 import { useAmountInCart } from '../../hooks/useAmountInCart';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import { useProduct } from '../../hooks/useProduct';
-import { useReviews } from '../../hooks/useReviews';
 import { useSendReview } from '../../hooks/useSendReview';
 import { useUpdateCartItem } from '../../hooks/useUpdateCartItems';
 import { useOpenModal } from '../../store/modal';
@@ -24,27 +23,19 @@ export const ProductDetail: FC = () => {
   const { productId } = useParams();
 
   const { product } = useProduct(Number(productId));
-  const { reviews } = useReviews(product?.id);
   const { isAuthUser } = useAuthUser();
-  const { sendReview } = useSendReview();
+  const { sendReview } = useSendReview(Number(productId));
   const { updateCartItem } = useUpdateCartItem();
   const handleOpenModal = useOpenModal();
   const { amountInCart } = useAmountInCart(Number(productId));
   const { activeOffer } = useActiveOffer(product);
 
   const handleSubmitReview = ({ comment }: { comment: string }) => {
-    sendReview({
-      variables: {
-        comment,
-        productId: Number(productId),
-      },
-    });
+    sendReview(comment, Number(productId));
   };
 
   const handleUpdateItem = (productId: number, amount: number) => {
-    updateCartItem({
-      variables: { amount: normalizeCartItemCount(amount), productId },
-    });
+    updateCartItem(normalizeCartItemCount(amount), productId);
   };
 
   return (
@@ -75,7 +66,7 @@ export const ProductDetail: FC = () => {
 
             <section className={styles.reviews()}>
               <h2 className={styles.reviewsHeading()}>レビュー</h2>
-              <ReviewSection hasSignedIn={isAuthUser} onSubmitReview={handleSubmitReview} reviews={reviews} />
+              <ReviewSection hasSignedIn={isAuthUser} onSubmitReview={handleSubmitReview} reviews={product?.reviews} />
             </section>
           </div>
         </WidthRestriction>

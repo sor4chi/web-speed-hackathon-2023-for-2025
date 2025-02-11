@@ -1,18 +1,23 @@
-import { useMutation } from '@apollo/client';
+import { useEffect } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
+import { useMutation } from 'urql';
 
-import type { UpdateItemInShoppingCartMutationResponse } from '../graphql/mutations';
-import { UpdateItemInShoppingCartMutation } from '../graphql/mutations';
+import { UpdateItemInShoppingCartMutation, type UpdateItemInShoppingCartMutationResponse } from '../graphql/mutations';
+
+import { useAuthUser } from './useAuthUser';
 
 export const useUpdateCartItem = () => {
   const handleError = useErrorHandler();
-  const [updateCartItem] = useMutation<UpdateItemInShoppingCartMutationResponse>(UpdateItemInShoppingCartMutation, {
-    onError: handleError,
-    onQueryUpdated(observableQuery) {
-      return observableQuery.refetch();
-    },
-    refetchQueries: ['GetAuthUser'],
-  });
+  const { refetch } = useAuthUser();
+  const [res, updateCartItem] = useMutation<UpdateItemInShoppingCartMutationResponse>(UpdateItemInShoppingCartMutation);
 
-  return { updateCartItem };
+  useEffect(() => {
+    if (res.error) {
+      handleError(res.error);
+    }
+  }, [res.error, handleError]);
+
+  return {
+    updateCartItem: (amount: number, productId: number) => updateCartItem({ amount, productId }).then(() => refetch()),
+  };
 };

@@ -1,4 +1,4 @@
-import { type FC, Suspense } from 'react';
+import { type FC } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { Layout } from '../../components/application/Layout';
@@ -17,13 +17,9 @@ export const Top: FC = () => {
       </Helmet>
       <Layout>
         <div>
-          <Suspense fallback={<div className={styles.heroImagePlaceholder()} />}>
-            <Recommendation />
-          </Suspense>
+          <Recommendation />
 
-          <Suspense fallback={<div style={{ height: '100vh' }} />}>
-            <FeatureList />
-          </Suspense>
+          <FeatureList />
         </div>
       </Layout>
     </>
@@ -34,7 +30,7 @@ const Recommendation: FC = () => {
   const { recommendation } = useRecommendation();
 
   if (recommendation === undefined) {
-    return null;
+    return <div className={styles.heroImagePlaceholder()} />;
   }
 
   return <ProductHeroImage product={recommendation.product} title="今週のオススメ" />;
@@ -44,7 +40,7 @@ const FeatureList: FC = () => {
   const { features } = useFeatures();
 
   if (features === undefined) {
-    return null;
+    return <div style={{ height: '100vh' }} />;
   }
 
   return (

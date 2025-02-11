@@ -49,13 +49,7 @@ export const SignUpModal: FC = () => {
     },
     async onSubmit(values, { resetForm }) {
       try {
-        await signUp({
-          variables: {
-            email: values.email,
-            name: values.name,
-            password: values.password,
-          },
-        });
+        await signUp(values.email, values.name, values.password);
         resetForm();
         setSubmitError(null);
         handleCloseModal();

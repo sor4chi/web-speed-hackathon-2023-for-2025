@@ -1,19 +1,25 @@
-import { useQuery } from '@apollo/client';
+import { useEffect } from 'react';
 import { useErrorHandler } from 'react-error-boundary';
+import { useQuery } from 'urql';
 
 import type { GetProductReviewsQueryResponse } from '../graphql/queries';
 import { GetProductReviewsQuery } from '../graphql/queries';
 
 export const useReviews = (productId: number | undefined) => {
   const handleError = useErrorHandler();
-
-  const reviewResult = useQuery<GetProductReviewsQueryResponse>(GetProductReviewsQuery, {
-    onError: handleError,
-    skip: !productId,
+  const [reviewResult] = useQuery<GetProductReviewsQueryResponse>({
+    pause: !productId,
+    query: GetProductReviewsQuery,
     variables: {
       productId,
     },
   });
+
+  useEffect(() => {
+    if (reviewResult.error) {
+      handleError(reviewResult.error);
+    }
+  }, [reviewResult.error, handleError]);
 
   const reviews = reviewResult.data?.product.reviews;
 

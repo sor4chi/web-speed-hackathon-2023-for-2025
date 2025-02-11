@@ -44,20 +44,10 @@ export const Order: FC = () => {
           <h2 className={styles.cartHeading()}>カート</h2>
           <OrderPreview
             onRemoveCartItem={(productId) => {
-              updateCartItem({
-                variables: {
-                  amount: 0,
-                  productId,
-                },
-              });
+              updateCartItem(0, productId);
             }}
             onUpdateCartItem={(productId, amount) => {
-              updateCartItem({
-                variables: {
-                  amount,
-                  productId,
-                },
-              });
+              updateCartItem(amount, productId);
             }}
             order={order}
           />
@@ -67,12 +57,7 @@ export const Order: FC = () => {
           <h2 className={styles.addressFormHeading()}>お届け先</h2>
           <OrderForm
             onSubmit={(values) => {
-              submitOrder({
-                variables: {
-                  address: `${values.prefecture}${values.city}${values.streetAddress}`,
-                  zipCode: values.zipCode,
-                },
-              }).then(() => {
+              submitOrder(`${values.prefecture}${values.city}${values.streetAddress}`, values.zipCode).then(() => {
                 navigate('/order/complete');
               });
             }}

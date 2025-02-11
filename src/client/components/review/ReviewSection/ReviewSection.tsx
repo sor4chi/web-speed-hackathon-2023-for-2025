@@ -15,7 +15,7 @@ const LESS_THAN_64_LENGTH_REGEX = /^([\s\S\n]{0,8}){0,8}$/u;
 // const commentSchema = z.string().regex(LESS_THAN_64_LENGTH_REGEX);
 const commentSchema = {
   safeParse: (v: unknown) =>
-    typeof v === 'string' && !LESS_THAN_64_LENGTH_REGEX.test(v) ? { success: true } : { success: false },
+    typeof v === 'string' && LESS_THAN_64_LENGTH_REGEX.test(v) ? { success: true } : { success: false },
 };
 
 type Props = {

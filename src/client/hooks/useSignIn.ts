@@ -1,14 +1,14 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from 'urql';
 
 import { SignInMutation } from '../graphql/mutations';
 
-export const useSignIn = () => {
-  const [signIn] = useMutation(SignInMutation, {
-    onQueryUpdated(observableQuery) {
-      return observableQuery.refetch();
-    },
-    refetchQueries: ['GetAuthUser'],
-  });
+import { useAuthUser } from './useAuthUser';
 
-  return { signIn };
+export const useSignIn = () => {
+  const { refetch } = useAuthUser();
+  const signIn = useMutation(SignInMutation)[1];
+
+  return {
+    signIn: (email: string, password: string) => signIn({ email, password }).then(() => refetch()),
+  };
 };
