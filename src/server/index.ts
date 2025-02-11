@@ -63,6 +63,40 @@ async function init(): Promise<void> {
     }),
   );
 
+  let cacheTopHead: string | null = null;
+
+  app.use(
+    route.get('/', async (ctx) => {
+      if (cacheTopHead == null) {
+        const recommendedProducts = await dataSource
+          .createQueryBuilder(Recommendation, 'recommendation')
+          .leftJoinAndSelect('recommendation.product', 'product')
+          .leftJoinAndSelect('product.media', 'media')
+          .leftJoinAndSelect('media.file', 'file')
+          .getMany();
+        const thumbnails = recommendedProducts.map((recommendation) => {
+          return recommendation.product.media.find((media) => media.isThumbnail)?.file.filename ?? '';
+        });
+        const additionalHeads = `
+  ${thumbnails
+    .map((thumbnail) => `<link rel="preload" href="${thumbnail.replace('.jpg', '-1024x576.webp')}" as="image">`)
+    .join('\n')}
+  <script>
+  window.__RECOMMENDED_PRODUCTS__ = ${JSON.stringify(recommendedProducts)};
+  </script>
+    `;
+        cacheTopHead = additionalHeads;
+      }
+      const pwd = process.cwd();
+      const rootResolve = (p: string) => path.resolve(pwd, p);
+      let html = await readFile(rootResolve('dist/index.html'), { encoding: 'utf-8' });
+      html = html.replace('<head>', `<head>${cacheTopHead}`);
+
+      ctx.response.set('Content-Type', 'text/html');
+      ctx.body = html;
+    }),
+  );
+
   app.use(serve(rootResolve('dist')));
   app.use(serve(rootResolve('public')));
 
