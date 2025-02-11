@@ -23,11 +23,7 @@ export default defineConfig(async () => {
 
   return {
     plugins: [
-      react({
-        babel: {
-          plugins: ['babel-plugin-react-compiler'],
-        },
-      }),
+      react(),
       wasm(),
       visualizer(),
       ViteEjsPlugin({

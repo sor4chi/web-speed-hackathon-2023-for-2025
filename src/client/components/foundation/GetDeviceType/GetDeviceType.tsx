@@ -7,7 +7,7 @@ export const DeviceType = {
 export type DeviceType = typeof DeviceType[keyof typeof DeviceType];
 
 type Props = {
-  children: ({ deviceType }: { deviceType: DeviceType }) => React.ReactElement;
+  children: ({ deviceType }: { deviceType: DeviceType }) => JSX.Element;
 };
 
 export const GetDeviceType = ({ children }: Props) => {
