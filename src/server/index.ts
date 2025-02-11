@@ -13,6 +13,7 @@ import session from 'koa-session';
 import serve from 'koa-static';
 
 import { Product } from '../model/product';
+import { Recommendation } from '../model/recommendation';
 
 import type { Context } from './context';
 import { dataSource } from './data_source';
@@ -100,27 +101,35 @@ async function init(): Promise<void> {
   app.use(serve(rootResolve('dist')));
   app.use(serve(rootResolve('public')));
 
+  const cacheProductHeads: Record<number, string> = {};
+
   app.use(
     route.get('/*', async (ctx) => {
-      const match = ctx.req.url?.match(PRODUCT_ROUTE_REGEX);
       let additionalHeads;
-      if (match != null) {
-        const productId = Number(match[1]);
-        const product = await dataSource
-          .createQueryBuilder(Product, 'product')
-          .leftJoinAndSelect('product.media', 'media')
-          .leftJoinAndSelect('media.file', 'file')
-          .where('product.id = :productId', { productId })
-          .getOneOrFail();
-        additionalHeads = `
+      const productRouteMatch = ctx.req.url?.match(PRODUCT_ROUTE_REGEX);
+      if (productRouteMatch != null) {
+        const productId = Number(productRouteMatch[1]);
+        if (cacheProductHeads[productId] == null) {
+          const product = await dataSource
+            .createQueryBuilder(Product, 'product')
+            .leftJoinAndSelect('product.media', 'media')
+            .leftJoinAndSelect('media.file', 'file')
+            .where('product.id = :productId', { productId })
+            .getOneOrFail();
+          cacheProductHeads[productId] = `
 <link rel="preload" href="${product.media[0].file.filename.replace('.jpg', '-1024x576.webp')}" as="image">
+<script>
+window.__PRODUCT_DETAILS__ = ${JSON.stringify(product)};
+</script>
 `;
+        }
+        additionalHeads = cacheProductHeads[productId];
       }
       const pwd = process.cwd();
       const rootResolve = (p: string) => path.resolve(pwd, p);
       let html = await readFile(rootResolve('dist/index.html'), { encoding: 'utf-8' });
       if (additionalHeads != null) {
-        html = html.replace('</head>', `${additionalHeads}</head>`);
+        html = html.replace('<head>', `<head>${additionalHeads}`);
       }
 
       ctx.response.set('Content-Type', 'text/html');

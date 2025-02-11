@@ -7,7 +7,7 @@ import { GetProductReviewsQuery } from '../graphql/queries';
 
 export const useReviews = (productId: number | undefined) => {
   const handleError = useErrorHandler();
-  const [reviewResult] = useQuery<GetProductReviewsQueryResponse>({
+  const [reviewResult, reexecuteQuery] = useQuery<GetProductReviewsQueryResponse>({
     pause: !productId,
     query: GetProductReviewsQuery,
     variables: {
@@ -23,5 +23,5 @@ export const useReviews = (productId: number | undefined) => {
 
   const reviews = reviewResult.data?.product.reviews;
 
-  return { reviews };
+  return { refetch: () => reexecuteQuery({ requestPolicy: 'network-only' }), reviews };
 };

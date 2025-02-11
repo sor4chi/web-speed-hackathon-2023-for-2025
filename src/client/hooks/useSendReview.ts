@@ -5,10 +5,10 @@ import { useMutation } from 'urql';
 import type { SendReviewMutationResponse } from '../graphql/mutations';
 import { SendReviewMutation } from '../graphql/mutations';
 
-import { useProduct } from './useProduct';
+import { useReviews } from './useReviews';
 
 export const useSendReview = (productId: number | undefined) => {
-  const { refetch } = useProduct(productId);
+  const { refetch } = useReviews(productId);
   const handleError = useErrorHandler();
   const [res, sendReview] = useMutation<SendReviewMutationResponse>(SendReviewMutation);
 
@@ -19,10 +19,6 @@ export const useSendReview = (productId: number | undefined) => {
   }, [res.error, handleError]);
 
   return {
-    sendReview: (comment: string, productId: number) =>
-      sendReview({ comment, productId }).then(() => {
-        console.log('Review sent');
-        refetch();
-      }),
+    sendReview: (comment: string, productId: number) => sendReview({ comment, productId }).then(() => refetch()),
   };
 };
