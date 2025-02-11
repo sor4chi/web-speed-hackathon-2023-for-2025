@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 
 import { ApolloServer } from '@apollo/server';
+import responseCachePlugin from '@apollo/server-plugin-response-cache';
+import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 import type { Context } from '../context';
@@ -36,11 +38,28 @@ export async function initializeApolloServer(): Promise<ApolloServer<Context>> {
       rootResolve('./src/model/user.graphql'),
       rootResolve('./src/server/graphql/mutation.graphql'),
       rootResolve('./src/server/graphql/query.graphql'),
+      rootResolve('./src/server/graphql/cache.graphql'),
     ].map((filepath) => fs.readFile(filepath, { encoding: 'utf-8' })),
   );
 
+  const CACHE_QUERIES = ['GetFeatureSections', 'GetRecommendations'];
+
   const server = new ApolloServer({
-    plugins: [ApolloServerPluginLandingPageLocalDefault({ includeCookies: true })],
+    plugins: [
+      ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
+      ApolloServerPluginCacheControl({
+        defaultMaxAge: 300,
+      }),
+      responseCachePlugin({
+        shouldWriteToCache: async ({ request }) => {
+          if (!request.http) return true;
+          if (!request.http.body) return true;
+          const queryName = (request.http.body as any).operationName;
+          console.log(`[responseCachePlugin] ${queryName}`);
+          return CACHE_QUERIES.includes(queryName);
+        },
+      }),
+    ],
     resolvers: {
       FeatureItem: featureItemResolver,
       FeatureSection: featureSectionResolver,
