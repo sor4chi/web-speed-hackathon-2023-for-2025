@@ -24,7 +24,7 @@ export const injectGlobalStyle = () => css`
   }
 
   @font-face {
-    font-display: block;
+    font-display: swap;
     font-family: 'Noto Serif JP';
     font-style: normal;
     font-weight: 700;
@@ -32,7 +32,7 @@ export const injectGlobalStyle = () => css`
   }
 
   @font-face {
-    font-display: block;
+    font-display: swap;
     font-family: 'Noto Serif JP';
     font-style: normal;
     font-weight: 400;
