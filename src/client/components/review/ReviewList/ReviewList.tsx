@@ -33,6 +33,7 @@ export const ReviewList: FC<Props> = ({ reviews }) => {
               <AspectRatio ratioHeight={1} ratioWidth={1}>
                 <Image
                   height={52}
+                  loading="lazy"
                   src={review.user.profile.avatar.filename.replace('.jpg', '-52x52.webp')}
                   width={52}
                 />

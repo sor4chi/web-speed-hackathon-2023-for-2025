@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import type { FC } from 'react';
-import { NavLink } from 'react-router-dom';
 
 import { DeviceType, GetDeviceType } from '../../foundation/GetDeviceType';
 
@@ -26,9 +25,9 @@ export const Footer: FC = () => {
                 </li>
               ))}
             </ul>
-            <NavLink to="/">
-              <img height="32" src="/icons/logo.svg" width="205" />
-            </NavLink>
+            <a href="/">
+              <img height="32" loading="lazy" src="/icons/logo.svg" width="205" />
+            </a>
           </footer>
         );
       }}
