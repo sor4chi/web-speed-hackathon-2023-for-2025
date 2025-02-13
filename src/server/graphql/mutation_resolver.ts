@@ -56,6 +56,8 @@ export const mutationResolver: MutationResolver = {
       throw new Error('Authentication required.');
     }
 
+    console.log('Send review', args);
+
     const postedAt = Temporal.Now.instant().toString({ timeZone: Temporal.TimeZone.from('UTC') });
 
     await dataSource.manager.save(

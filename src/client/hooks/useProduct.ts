@@ -1,7 +1,15 @@
-import type { GetProductDetailsQueryResponse } from '../graphql/queries';
+import { useQuery } from 'urql';
+
+import { GetProductDetailsQuery, type GetProductDetailsQueryResponse } from '../graphql/queries';
 
 export const useProduct = (_productId: number | undefined) => {
-  const product = window.__PRODUCT_DETAILS__;
+  const [productResponse] = useQuery<GetProductDetailsQueryResponse>({
+    pause: window.__PRODUCT_DETAILS__ != null,
+    query: GetProductDetailsQuery,
+    variables: { productId: _productId },
+  });
+
+  const product = productResponse.data?.product ?? window.__PRODUCT_DETAILS__;
 
   return { product };
 };

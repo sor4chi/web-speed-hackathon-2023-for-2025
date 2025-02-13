@@ -1,18 +1,15 @@
-// import { useQuery } from 'urql';
+import { useQuery } from 'urql';
 
-import type { GetRecommendationsQueryResponse } from '../graphql/queries';
-
-// import type { GetRecommendationsQueryResponse } from '../graphql/queries';
-// import { GetRecommendationsQuery } from '../graphql/queries';
+import { GetRecommendationsQuery, type GetRecommendationsQueryResponse } from '../graphql/queries';
 
 export const useRecommendation = () => {
-  // const [recommendationsResult] = useQuery<GetRecommendationsQueryResponse>({
-  //   query: GetRecommendationsQuery,
-  // });
+  const [recommendationsResult] = useQuery<GetRecommendationsQueryResponse>({
+    pause: window.__RECOMMENDED_PRODUCTS__ != null,
+    query: GetRecommendationsQuery,
+  });
 
   const hour = new Date().getHours();
-  // const recommendations = recommendationsResult?.data?.recommendations;
-  const recommendations = window.__RECOMMENDED_PRODUCTS__;
+  const recommendations = recommendationsResult.data?.recommendations || window.__RECOMMENDED_PRODUCTS__;
 
   if (recommendations == null) {
     return { recommendation: undefined };

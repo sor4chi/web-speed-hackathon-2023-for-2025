@@ -15,6 +15,7 @@ import serve from 'koa-static';
 import { FeatureSection } from '../model/feature_section';
 import { Product } from '../model/product';
 import { Recommendation } from '../model/recommendation';
+import { Review } from '../model/review';
 
 import type { Context } from './context';
 import { dataSource } from './data_source';
@@ -117,25 +118,38 @@ async function init(): Promise<void> {
 
   app.use(
     route.get('/*', async (ctx) => {
-      let additionalHeads;
+      let additionalHeads = '';
       const productRouteMatch = ctx.req.url?.match(PRODUCT_ROUTE_REGEX);
       if (productRouteMatch != null) {
         const productId = Number(productRouteMatch[1]);
         if (cacheProductHeads[productId] == null) {
           const product = await dataSource
             .createQueryBuilder(Product, 'product')
+            .leftJoinAndSelect('product.offers', 'offers')
             .leftJoinAndSelect('product.media', 'media')
             .leftJoinAndSelect('media.file', 'file')
             .where('product.id = :productId', { productId })
             .getOneOrFail();
           cacheProductHeads[productId] = `
-<link rel="preload" href="${product.media[0].file.filename.replace('.jpg', '-1024x576.webp')}" as="image">
-<script>
-window.__PRODUCT_DETAILS__ = ${JSON.stringify(product)};
-</script>
-`;
+            <link rel="preload" href="${product.media[0].file.filename.replace('.jpg', '-1024x576.webp')}" as="image">
+            <script>
+            window.__PRODUCT_DETAILS__ = ${JSON.stringify(product)};
+            </script>
+            `;
         }
-        additionalHeads = cacheProductHeads[productId];
+        additionalHeads += cacheProductHeads[productId];
+        const review = await dataSource
+          .createQueryBuilder(Review, 'review')
+          .leftJoinAndSelect('review.user', 'user')
+          .leftJoinAndSelect('user.profile', 'profile')
+          .leftJoinAndSelect('profile.avatar', 'avatar')
+          .where('review.product = :productId', { productId })
+          .getMany();
+        additionalHeads += `
+      <script>
+      window.__PRODUCT_REVIEW__ = ${JSON.stringify(review)};
+      </script>
+            `;
       }
       const pwd = process.cwd();
       const rootResolve = (p: string) => path.resolve(pwd, p);

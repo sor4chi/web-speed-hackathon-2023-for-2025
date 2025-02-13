@@ -1,7 +1,13 @@
-import type { GetFeatureSectionsQueryResponse } from '../graphql/queries';
+import { useQuery } from 'urql';
+
+import { GetFeatureSectionsQuery, type GetFeatureSectionsQueryResponse } from '../graphql/queries';
 
 export const useFeatures = () => {
-  const features = window.__FEATURE_PRODUCTS__;
+  const [featuresResult] = useQuery<GetFeatureSectionsQueryResponse>({
+    pause: window.__RECOMMENDED_PRODUCTS__ != null,
+    query: GetFeatureSectionsQuery,
+  });
+  const features = featuresResult.data?.features || window.__FEATURE_PRODUCTS__;
 
   return { features };
 };
