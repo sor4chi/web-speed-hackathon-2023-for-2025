@@ -12,6 +12,7 @@ import route from 'koa-route';
 import session from 'koa-session';
 import serve from 'koa-static';
 
+import { FeatureSection } from '../model/feature_section';
 import { Product } from '../model/product';
 import { Recommendation } from '../model/recommendation';
 
@@ -69,12 +70,22 @@ async function init(): Promise<void> {
   app.use(
     route.get('/', async (ctx) => {
       if (cacheTopHead == null) {
-        const recommendedProducts = await dataSource
-          .createQueryBuilder(Recommendation, 'recommendation')
-          .leftJoinAndSelect('recommendation.product', 'product')
-          .leftJoinAndSelect('product.media', 'media')
-          .leftJoinAndSelect('media.file', 'file')
-          .getMany();
+        const [recommendedProducts, featuredProducts] = await Promise.all([
+          dataSource
+            .createQueryBuilder(Recommendation, 'recommendation')
+            .leftJoinAndSelect('recommendation.product', 'product')
+            .leftJoinAndSelect('product.media', 'media')
+            .leftJoinAndSelect('media.file', 'file')
+            .getMany(),
+          dataSource
+            .createQueryBuilder(FeatureSection, 'featureSection')
+            .leftJoinAndSelect('featureSection.items', 'items')
+            .leftJoinAndSelect('items.product', 'product')
+            .leftJoinAndSelect('product.offers', 'offers')
+            .leftJoinAndSelect('product.media', 'media')
+            .leftJoinAndSelect('media.file', 'file')
+            .getMany(),
+        ]);
         const thumbnails = recommendedProducts.map((recommendation) => {
           return recommendation.product.media.find((media) => media.isThumbnail)?.file.filename ?? '';
         });
@@ -84,6 +95,7 @@ async function init(): Promise<void> {
     .join('\n')}
   <script>
   window.__RECOMMENDED_PRODUCTS__ = ${JSON.stringify(recommendedProducts)};
+  window.__FEATURE_PRODUCTS__ = ${JSON.stringify(featuredProducts)};
   </script>
     `;
         cacheTopHead = additionalHeads;
@@ -91,7 +103,7 @@ async function init(): Promise<void> {
       const pwd = process.cwd();
       const rootResolve = (p: string) => path.resolve(pwd, p);
       let html = await readFile(rootResolve('dist/index.html'), { encoding: 'utf-8' });
-      html = html.replace('<head>', `<head>${cacheTopHead}`);
+      html = html.replace('<!-- INJECT -->', cacheTopHead);
 
       ctx.response.set('Content-Type', 'text/html');
       ctx.body = html;
@@ -129,7 +141,7 @@ window.__PRODUCT_DETAILS__ = ${JSON.stringify(product)};
       const rootResolve = (p: string) => path.resolve(pwd, p);
       let html = await readFile(rootResolve('dist/index.html'), { encoding: 'utf-8' });
       if (additionalHeads != null) {
-        html = html.replace('<head>', `<head>${additionalHeads}`);
+        html = html.replace('<!-- INJECT -->', additionalHeads);
       }
 
       ctx.response.set('Content-Type', 'text/html');

@@ -1,14 +1,14 @@
-import { useQuery } from 'urql';
-
 import type { GetFeatureSectionsQueryResponse } from '../graphql/queries';
-import { GetFeatureSectionsQuery } from '../graphql/queries';
 
 export const useFeatures = () => {
-  const [featuresResult] = useQuery<GetFeatureSectionsQueryResponse>({
-    query: GetFeatureSectionsQuery,
-  });
-
-  const features = featuresResult.data?.features;
+  const features = window.__FEATURE_PRODUCTS__;
 
   return { features };
 };
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface Window {
+    __FEATURE_PRODUCTS__: GetFeatureSectionsQueryResponse['features'];
+  }
+}
